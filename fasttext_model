@@ -1,0 +1,16 @@
+!wget https://github.com/facebookresearch/fastText/archive/v0.9.2.zip && unzip v0.9.2.zip && pip install fastText-0.9.2/ 
+!wget --no-check-certificate 'https://docs.google.com/uc?export=download&id=1rajDxvxqZkth8BW6j-1OvQ585W546sw9'
+import pandas as pd
+df = pd.read_excel (r'/content/uc?export=download&id=1rajDxvxqZkth8BW6j-1OvQ585W546sw9')
+df2='__label__'+df['target'].astype(str) +" " +df['review_text'].astype(str)
+tfile = open('test.txt', 'a')
+tfile.write(df2.to_string(index = False))
+tfile.close()
+!wc test.txt 
+!cat test.txt | sed -e "s/[[:upper:]]*/\L&/g ; s/\+[^а-я]/ /g;s/ \+/ /"> test0.txt
+!head -n 64227 test0.txt > test.train
+!tail -n 13056 test0.txt > test.valid
+import fasttext
+model=fasttext.train_supervised(input="test.train", epoch=25, wordNgrams=5)
+model.save_model("kino.bin")
+model.test("test.valid")
